@@ -84,7 +84,7 @@ app.post("/login", async (req, res) => {
       WHERE email = ${email}
     `;
 
-    return res.json({ botToken, message: "login successful" });
+    return res.json({ botToken,name:user.name, message: "login successful" });
 
   } catch (err) {
     console.log(err);
