@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parky The Bot - Authentication</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            margin-bottom: -2px;
+        }
+
+        .form-container {
+            display: none;
+        }
+
+        .form-container.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .token-display {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            word-break: break-all;
+            display: none;
+        }
+
+        .token-display code {
+            color: #667eea;
+            font-size: 12px;
+        }
+    </style>
+    <script
+      id="zsiqscript"
+      src="https://salesiq.zohopublic.in/widget?wc=siq432810251110ab8fa1526b5b918a80f6ca4a6de27ee9e3572852a9858c9dc685"
+      defer ></script>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Parky The Bot</h1>
+        <p class="subtitle">Authentication Portal</p>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('login')">Login</button>
+            <button class="tab" onclick="switchTab('signup')">Sign Up</button>
+            <button class="tab" onclick="switchTab('token')">Get Token</button>
+        </div>
+
+        <div id="message" class="message"></div>
+
+        <!-- Login Form -->
+        <div id="login-form" class="form-container active">
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+            <div id="login-token" class="token-display">
+                <strong>Your Bot Token:</strong><br>
+                <code id="login-token-value"></code>
+            </div>
+        </div>
+
+        <!-- Signup Form -->
+        <div id="signup-form" class="form-container">
+            <form onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label for="signup-name">Name</label>
+                    <input type="text" id="signup-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-phone">Phone</label>
+                    <input type="tel" id="signup-phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" required>
+                </div>
+                <button type="submit">Sign Up</button>
+            </form>
+        </div>
+
+        <!-- Token Fetch Form -->
+        <div id="token-form" class="form-container">
+            <form onsubmit="handleTokenFetch(event)">
+                <div class="form-group">
+                    <label for="token-email">Email</label>
+                    <input type="email" id="token-email" required>
+                </div>
+                <button type="submit">Get Token</button>
+            </form>
+            <div id="fetch-token" class="token-display">
+                <strong>Your Bot Token:</strong><br>
+                <code id="fetch-token-value"></code>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.form-container').forEach(f => f.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(`${tab}-form`).classList.add('active');
+            
+            hideMessage();
+            hideTokens();
+        }
+
+        function showMessage(text, type) {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = `message ${type}`;
+            msg.style.display = 'block';
+        }
+
+        function hideMessage() {
+            document.getElementById('message').style.display = 'none';
+        }
+
+        function hideTokens() {
+            document.querySelectorAll('.token-display').forEach(t => t.style.display = 'none');
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            hideTokens();
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showMessage(data.message, 'success');
+                    document.getElementById('login-token-value').textContent = data.botToken;
+                    document.getElementById('login-token').style.display = 'block';
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('An error occurred during login', 'error');
+            }
+        }
+
+        async function handleSignup(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const phone = document.getElementById('signup-phone').value;
+            const password = document.getElementById('signup-password').value;
+
+            try {
+                const response = await fetch('/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, phone, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showMessage(data.message + ' - Please login to get your token', 'success');
+                    e.target.reset();
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('An error occurred during signup', 'error');
+            }
+        }
+
+        async function handleTokenFetch(e) {
+            e.preventDefault();
+            document.getElementById('fetch-token').style.display = 'none';
+            
+            const email = document.getElementById('token-email').value;
+
+            try {
+                const response = await fetch('/token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showMessage('Token retrieved successfully', 'success');
+                    document.getElementById('fetch-token-value').textContent = data.token;
+                    document.getElementById('fetch-token').style.display = 'block';
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('An error occurred while fetching token', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
