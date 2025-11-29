@@ -17,6 +17,7 @@ const sql = neon(process.env.DATABASE_URL);
 const PORT = 3700;
 
 app.use(express.json());
+app.use("/img", express.static(path.join(__dirname, "public")));
 // app.use(express.static("public"));
 // app.use(sessionMiddleware);
 
